@@ -153,13 +153,13 @@ if selected == "Register":
         email_msg = EmailMessage()
         email_msg.set_content(email_content, subtype='html')
         email_msg['Subject'] = "Your Pot-Sol OTP Verification Code"
-        email_msg['From'] = "no.reply.pot.sol@gmail.com"
+        email_msg['From'] = "sender email address"  # Replace with your email address
         email_msg['To'] = receiver_email
 
         # Set up the SMTP server (use your email credentials)
         try:
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login("no.reply.pot.sol@gmail.com", "rfkh opci nhgs hyop")  # Replace with your credentials
+                smtp.login("sender email address", "app password")  # Replace with your credentials
                 smtp.send_message(email_msg)
             return True
         except Exception as e:
@@ -259,13 +259,13 @@ if selected == "Register":
             email_msg = EmailMessage()
             email_msg.set_content(email_content, subtype='html')
             email_msg['Subject'] = "Welcome to Pot-Sol!"
-            email_msg['From'] = "no.reply.pot.sol@gmail.com"
+            email_msg['From'] = "sender email address"  # Replace with your email address
             email_msg['To'] = receiver_email
 
             # Set up the SMTP server (use your email credentials)
             try:
                 with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                    smtp.login("no.reply.pot.sol@gmail.com", "rfkh opci nhgs hyop")  # Replace with your email credentials
+                    smtp.login("sender email address", "app password")  # Replace with your email credentials
                     smtp.send_message(email_msg)
                 return True
             except Exception as e:

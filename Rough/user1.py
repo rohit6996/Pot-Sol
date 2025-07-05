@@ -78,215 +78,6 @@ def login(username, password):
         return True
     return False
 
-# html_code = """
-# <!DOCTYPE html>
-# <html lang="en">
-
-# <head>
-#     <meta charset="UTF-8">
-#     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-#     <title>Manually Select Location</title>
-#     <style>
-#         body {
-#             margin: 0;
-#             padding: 0;
-#         }
-
-#         #map-container {
-#             width: 100%;
-#             height: 75vh;
-#             /* Reduced the height of the map */
-#             margin: 0 auto;
-#             border: 1px solid #ccc;
-#             border-radius: 5px;
-#             box-sizing: border-box;
-#             overflow: hidden;
-#         }
-
-#         #coordinates-display {
-#             color: white;
-#             /* Change this to any color you want */
-#         }
-
-#         #address-display {
-#             color: white;
-#             /* Change this to any color you want */
-#         }
-
-
-#         #map {
-#             height: calc(100% - 2px);
-#             width: calc(100% - 2px);
-#             margin: 1px;
-#         }
-
-#         #selected-coordinates {
-#             text-align: center;
-#             margin-top: 10px;
-#             font-weight: bold;
-#         }
-
-#         #copy-button {
-#             margin-top: 10px;
-#             cursor: pointer;
-#             background-color: #4caf50;
-#             color: white;
-#             border: none;
-#             border-radius: 5px;
-#             padding: 8px 16px;
-#             text-align: center;
-#             text-decoration: none;
-#             display: inline-block;
-#             font-size: 15px;
-#         }
-
-#         /* Position the button over the map */
-#         #get-location-btn {
-#             position: absolute;
-#             top: 10px;
-#             left: 10px;
-#             z-index: 5;
-#             background-color: #007bff;
-#             color: white;
-#             padding: 10px 20px;
-#             border: none;
-#             border-radius: 5px;
-#             cursor: pointer;
-#             font-size: 14px;
-#         }
-
-#         #get-location-btn:hover {
-#             background-color: #0056b3;
-#         }
-#     </style>
-# </head>
-
-# <body>
-
-#     <!-- Get My Location Button -->
-#     <button id="get-location-btn" onclick="getMyLocation()">Get My Location</button>
-
-#     <div id="map-container">
-#         <div id="map"></div>
-#     </div>
-
-#     <div id="selected-coordinates">
-#         <span id="coordinates-display"></span><br>
-#         <span id="address-display"></span><br>
-#         <button id="copy-button" onclick="copyToClipboard()">Copy to Clipboard</button>
-#     </div>
-
-#     <script>
-#         let map, marker;
-
-#         function initMap() {
-#             // Initialize the map with a default location
-#             map = new google.maps.Map(document.getElementById('map'), {
-#                 center: { lat: 21.126089, lng: 79.003391 },
-#                 zoom: 12
-#             });
-
-#             // Initialize marker
-#             marker = new google.maps.Marker({
-#                 position: map.getCenter(),
-#                 map: map,
-#                 draggable: true,
-#                 title: 'Drag me!'
-#             });
-
-#             // Add a click event listener to the map
-#             google.maps.event.addListener(map, 'click', function (event) {
-#                 marker.setPosition(event.latLng);
-#                 const selectedLocation = {
-#                     lat: event.latLng.lat(),
-#                     lng: event.latLng.lng()
-#                 };
-
-#                 // Display the coordinates on the page
-#                 document.getElementById('coordinates-display').innerHTML =
-#                     'Selected Coordinates: ' + selectedLocation.lat + ', ' + selectedLocation.lng;
-
-#                 // Call the Geocoding API to get the address
-#                 getAddress(selectedLocation.lat, selectedLocation.lng);
-#             });
-#         }
-
-#         // Function to get user's current location
-#         function getMyLocation() {
-#             if (navigator.geolocation) {
-#                 navigator.geolocation.getCurrentPosition(
-#                     function (position) {
-#                         const userLocation = {
-#                             lat: position.coords.latitude,
-#                             lng: position.coords.longitude
-#                         };
-
-#                         // Center the map on user's location
-#                         map.setCenter(userLocation);
-#                         map.setZoom(15);
-#                         marker.setPosition(userLocation);
-
-#                         // Display the user's coordinates and get the address
-#                         document.getElementById('coordinates-display').innerHTML =
-#                             'Selected Coordinates: ' + userLocation.lat + ', ' + userLocation.lng;
-#                         getAddress(userLocation.lat, userLocation.lng);
-#                     },
-#                     function () {
-#                         alert('Geolocation permission denied. Unable to get location.');
-#                     }
-#                 );
-#             } else {
-#                 alert('Geolocation is not supported by this browser.');
-#             }
-#         }
-
-#         // Function to copy coordinates to clipboard
-#         function copyToClipboard() {
-#             const selectedLocation = {
-#                 lat: marker.getPosition().lat(),
-#                 lng: marker.getPosition().lng()
-#             };
-#             const coordinatesText = selectedLocation.lat + ', ' + selectedLocation.lng;
-#             navigator.clipboard.writeText(coordinatesText)
-#                 .then(function () {
-#                     alert('Coordinates copied to clipboard: ' + coordinatesText);
-#                 })
-#                 .catch(function (err) {
-#                     console.error('Unable to copy to clipboard', err);
-#                 });
-#         }
-
-#         // Function to get address from coordinates using Google Geocoding API
-#         function getAddress(lat, lng) {
-#             const geocoder = new google.maps.Geocoder();
-#             const latLng = { lat: parseFloat(lat), lng: parseFloat(lng) };
-
-#             geocoder.geocode({ location: latLng }, function (results, status) {
-#                 if (status === 'OK') {
-#                     if (results[0]) {
-#                         const address = results[0].formatted_address;
-#                         document.getElementById('address-display').innerHTML = 'Address: ' + address;
-#                     } else {
-#                         document.getElementById('address-display').innerHTML = 'No address found';
-#                     }
-#                 } else {
-#                     console.error('Geocoder failed due to: ' + status);
-#                 }
-#             });
-#         }
-#     </script>
-
-#     <!-- Google Maps with API key -->
-#     <script async defer
-#         src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE_&callback=initMap">
-#         </script>
-
-# </body>
-
-# </html>
-
-# """
-
 
 # Sidebar for navigation
 with st.sidebar:
@@ -344,31 +135,31 @@ if selected == "Register":
         # Create the email content
         email_content = f"""
         <div style="background-color:#111827; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; margin: auto; color: #ffffff; font-family: Arial, sans-serif; text-align: center;">
-        <h3 style="color: #ffffff;">Hi Citizen,</h3>
-        <p style="color: #ffffff;">Here is your unique login code to access your Pot-Sol account:</p>
-        <div style="background-color: #2d3748; padding: 15px; border-radius: 8px; font-size: 24px; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff;">
-            {otp}
+            <h3 style="color: #ffffff;">Hi Citizen,</h3>
+            <p style="color: #ffffff;">Here is your unique login code to access your Pot-Sol account:</p>
+            <div style="background-color: #2d3748; padding: 15px; border-radius: 8px; font-size: 24px; letter-spacing: 2px; margin-bottom: 20px; color: #ffffff;">
+                {otp}
+            </div>
+            <p style="font-size: 14px; color: #ffffff;">
+                We have implemented these measures as an extra layer of security, which is extremely important to us.
+            </p>
+            <div style="margin-top: 40px;">
+                <p style="font-size: 12px; color: #ffffff;">© Pot-Sol Management, All Rights Reserved</p>
+            </div>
         </div>
-        <p style="font-size: 14px; color: #ffffff;">
-            We have implemented these measures as an extra layer of security, which is extremely important to us.
-        </p>
-        <div style="margin-top: 40px;">
-            <p style="font-size: 12px; color: #ffffff;">© Pot-Sol Management, All Rights Reserved</p>
-        </div>
-    </div>
             """
 
         # Set up the email details
         email_msg = EmailMessage()
         email_msg.set_content(email_content, subtype='html')
         email_msg['Subject'] = "Your Pot-Sol OTP Verification Code"
-        email_msg['From'] = "no.reply.pot.sol@gmail.com"
+        email_msg['From'] = "sender email address"  # Replace with your email address
         email_msg['To'] = receiver_email
 
         # Set up the SMTP server (use your email credentials)
         try:
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login("no.reply.pot.sol@gmail.com", "rfkh opci nhgs hyop")  # Replace with your credentials
+                smtp.login("sender email address", "app password")  # Replace with your credentials
                 smtp.send_message(email_msg)
             return True
         except Exception as e:
@@ -468,13 +259,13 @@ if selected == "Register":
             email_msg = EmailMessage()
             email_msg.set_content(email_content, subtype='html')
             email_msg['Subject'] = "Welcome to Pot-Sol!"
-            email_msg['From'] = "no.reply.pot.sol@gmail.com"
+            email_msg['From'] = "sender email address"  # Replace with your email address
             email_msg['To'] = receiver_email
 
             # Set up the SMTP server (use your email credentials)
             try:
                 with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                    smtp.login("no.reply.pot.sol@gmail.com", "rfkh opci nhgs hyop")  # Replace with your email credentials
+                    smtp.login("sender email address", "app password")  # Replace with your email credentials
                     smtp.send_message(email_msg)
                 return True
             except Exception as e:
