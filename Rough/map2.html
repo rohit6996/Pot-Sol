@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manually Select Location</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map-container {
+            width: 100%;
+            height: 75vh;
+            /* Reduced the height of the map */
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+            /* Ensure the button is positioned relative to the map */
+        }
+
+        #coordinates-display {
+            color: black;
+            /* Change this to any color you want */
+        }
+
+        #address-display {
+            color: black;
+            /* Change this to any color you want */
+        }
+
+        #map {
+            height: calc(100% - 2px);
+            width: calc(100% - 2px);
+            margin: 1px;
+        }
+
+        #selected-coordinates {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #copy-coordinates-button,
+        #copy-address-button {
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            margin-right: 5px;
+        }
+
+        /* Position the button inside the map at the bottom-right corner */
+        #get-location-btn {
+            position: absolute;
+            bottom: 135px;
+            right: 10px;
+            z-index: 5;
+            width: 45px;
+            height: 45px;
+            background-color: white;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #get-location-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        #get-location-btn::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 3px solid gray;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        #get-location-btn::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background-color: gray;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map-container">
+        <div id="map"></div>
+        <!-- Get My Location Button inside map -->
+        <button id="get-location-btn" onclick="getMyLocation()"></button>
+    </div>
+
+    <div id="selected-coordinates">
+        <span id="coordinates-display"></span><br>
+        <span id="address-display"></span><br>
+        <button id="copy-coordinates-button" onclick="copyCoordinates()">Copy Coordinates</button>
+        <button id="copy-address-button" onclick="copyAddress()">Copy Address</button>
+    </div>
+
+    <script>
+        let map, marker;
+
+        function initMap() {
+            // Initialize the map with a default location
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 21.126089, lng: 79.003391 },
+                zoom: 12
+            });
+
+            // Initialize marker
+            marker = new google.maps.Marker({
+                position: map.getCenter(),
+                map: map,
+                draggable: true,
+                title: 'Drag me!'
+            });
+
+            // Add a click event listener to the map
+            google.maps.event.addListener(map, 'click', function (event) {
+                marker.setPosition(event.latLng);
+                const selectedLocation = {
+                    lat: event.latLng.lat(),
+                    lng: event.latLng.lng()
+                };
+
+                // Display the coordinates on the page
+                document.getElementById('coordinates-display').innerHTML =
+                    selectedLocation.lat + ', ' + selectedLocation.lng;
+
+                // Call the Geocoding API to get the address
+                getAddress(selectedLocation.lat, selectedLocation.lng);
+            });
+        }
+
+        // Function to get user's current location
+        function getMyLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        // Center the map on user's location
+                        map.setCenter(userLocation);
+                        map.setZoom(15);
+                        marker.setPosition(userLocation);
+
+                        // Display the user's coordinates and get the address
+                        document.getElementById('coordinates-display').innerHTML =
+                            userLocation.lat + ', ' + userLocation.lng;
+                        getAddress(userLocation.lat, userLocation.lng);
+                    },
+                    function () {
+                        alert('Geolocation permission denied. Unable to get location.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        // Function to copy only the coordinates to clipboard
+        function copyCoordinates() {
+            const selectedLocation = {
+                lat: marker.getPosition().lat(),
+                lng: marker.getPosition().lng()
+            };
+            const coordinatesText = selectedLocation.lat + ', ' + selectedLocation.lng;
+
+            navigator.clipboard.writeText(coordinatesText)
+                .then(function () {
+                    alert('Coordinates copied to clipboard:\n' + coordinatesText);
+                })
+                .catch(function (err) {
+                    console.error('Unable to copy coordinates to clipboard', err);
+                });
+        }
+
+        // Function to copy only the address to clipboard
+        function copyAddress() {
+            const addressText = document.getElementById('address-display').innerText;
+
+            navigator.clipboard.writeText(addressText)
+                .then(function () {
+                    alert('Address copied to clipboard:\n' + addressText);
+                })
+                .catch(function (err) {
+                    console.error('Unable to copy address to clipboard', err);
+                });
+        }
+
+        // Function to get address from coordinates using Google Geocoding API
+        function getAddress(lat, lng) {
+            const geocoder = new google.maps.Geocoder();
+            const latLng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+            geocoder.geocode({ location: latLng }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        const address = results[0].formatted_address;
+                        document.getElementById('address-display').innerHTML = address;
+                    } else {
+                        document.getElementById('address-display').innerHTML = 'No address found';
+                    }
+                } else {
+                    console.error('Geocoder failed due to: ' + status);
+                }
+            });
+        }
+    </script>
+
+    <!-- Google Maps with API key -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE_&callback=initMap">
+    </script>
+
+</body>
+
+</html>
