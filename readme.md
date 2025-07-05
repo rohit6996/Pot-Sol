@@ -20,8 +20,8 @@
 * 🔐 **Secure Registration with OTP Verification**
   Users must **register using their email ID**, and complete a **one-time OTP verification** to authenticate.
 
-* 🧾 **Complaint Status Tracking** *(Coming Soon)*
-  Users will be able to check the status of previously submitted complaints.
+* 🧾 **Admin Dashboard Panel** 
+  Admin can login using their credential to view, update the status of complaint & delete the complaint.
 
 * 🗂️ **Complaint History Log** *(Coming Soon)*
   Logged-in users will have access to their personal dashboard showing complaint history and responses.
@@ -40,15 +40,9 @@
 
 ---
 
-## 📸 Screenshots
-
-> *(Add relevant screenshots here showing registration, map, form submission, etc.)*
-
----
 
 ## 🧠 Future Enhancements
 
-* ✅ Admin dashboard to view and prioritize complaints
 * 📡 SMS or Email alerts once complaints are resolved
 * 🔍 Filter and search complaints by area, type, and date
 * 📊 Visual analytics dashboard for authorities
@@ -63,7 +57,7 @@
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/potsol.git
+   git clone https://github.com/rohit6996/potsol.git
    cd potsol
    ```
 
@@ -84,8 +78,8 @@
 ## 🧑‍💻 Author
 
 **Rohit Bhandarkar**
-📧 [rohitbhandarkar@email.com](mailto:rohitbhandarkar@email.com)
-🔗 [LinkedIn](#) • [GitHub](https://github.com/rohit6996)
+📧 [rohitbhandarkar@email.com](mailto:rohitbhandarkar2205@email.com)
+🔗 [LinkedIn](https://www.linkedin.com/in/rohit-bhandarkar-486158265/) • [GitHub](https://github.com/rohit6996)
 
 ---
 
